@@ -4,7 +4,6 @@
 .env.development
 .env.production
 
-
 # dependencies
 /node_modules
 /.pnp
@@ -39,4 +38,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-.env.development
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
