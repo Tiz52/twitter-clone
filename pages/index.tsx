@@ -1,26 +1,70 @@
+import {GetServerSideProps} from "next";
 import type {NextPage} from "next";
-import Head from "next/head";
+import {useSession, getProviders, getSession} from "next-auth/react";
+import {BuiltInProviderType} from "next-auth/providers";
 
-import {Sidebar} from "../components";
-import styles from "../styles/Home.module.css";
+import {
+  Feed,
+  Login,
+  Modal,
+  Sidebar,
+  TwitterLayout,
+  Widgets,
+} from "../components";
 
-const Home: NextPage = () => {
+interface Props {
+  trendingResults: any;
+  followResults: any;
+  providers: any;
+  session?: any;
+}
+
+const Home: NextPage<Props> = ({followResults, trendingResults, providers}) => {
+  const {data: session} = useSession();
+
+  if (!session) {
+    return <Login providers={providers} />;
+  }
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Twitter</title>
-        <link href="/favicon.ico" rel="icon" />
-      </Head>
-
-      <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
+    <TwitterLayout pageDescription="Twitter Clone" title="Home / Twitter">
+      <header className="flex flex-col flex-auto items-end">
         <Sidebar />
-        {/*Feed*/}
-        {/*Widgets*/}
-
-        {/*Modal*/}
+      </header>
+      <main className="flex flex-col flex-auto items-start">
+        <div className="flex flex-auto xl:w-[990px] md:w-[660px]">
+          <div className="flex w-full min-h-full flex-grow justify-between items-stretch">
+            <Feed />
+            <Widgets />
+          </div>
+        </div>
       </main>
-    </div>
+      {/*Widgets*/}
+
+      <Modal />
+    </TwitterLayout>
   );
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const trendingResults = await fetch("https://jsonkeeper.com/b/NKE").then(
+    (res) => res.json(),
+  );
+  const followResults = await fetch("https://jsonkeeper.com/b/WWMJ").then(
+    (res) => res.json(),
+  );
+
+  const providers = await getProviders();
+  const session = await getSession(ctx);
+
+  return {
+    props: {
+      trendingResults,
+      followResults,
+      providers,
+      session,
+    },
+  };
+};
