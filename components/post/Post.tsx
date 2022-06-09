@@ -134,6 +134,7 @@ export const Post: FC<Props> = ({id, post, postPage}) => {
           className="rounded-2x1 max-h-[700px] object-cover mr-2"
           src={post?.image}
         />
+        
 
         <div
           className={`text-[#6e767d] flex justify-between w-10/12 ${
